@@ -4,8 +4,13 @@ numCPUs = require('os').cpus().length
 domain = require 'domain'
 require 'sugar'
 
+# Provides clustering functionality
 class Cluster extends Core.CoreObject
-  constructor: (fn, options) ->
+  # Construct a new Cluster
+  #
+  # @param [Function] fn The function to run in each CPU
+  # @param [Object] options Configuration options to be associated with the instance
+  constructor: (fn, options = {}) ->
     super(options)
 
     if cluster.isMaster

@@ -4,13 +4,23 @@ express = require 'express'
 morgan = require 'morgan'
 require 'sugar'
 
+# Provides a simple express application
 class Application extends Core.CoreObject
-  constructor: (options) ->
+  # Construct a new Application
+  #
+  # @param [Object] options Configuration options to be associated with the instance
+  constructor: (options = {}) ->
     super(options)
     @app = express()
 
+  # Wraps the express use function
+  #
+  # @param [Function] fn The function used to configure the application
   use: (fn) -> fn.call @, @app
 
+  # Start the application
+  #
+  # @param [Integer] port The port on which to serve the application
   start: (port) ->
     port = if port then port
     else (process.env.PORT || @options.port)

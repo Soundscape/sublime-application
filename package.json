@@ -1,6 +1,6 @@
 {
   "name": "sublime-application",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "Simple express based application",
   "main": "./out/index",
   "scripts": {
