@@ -2,6 +2,12 @@ Core = require 'sublime-core'
 http = require 'http'
 express = require 'express'
 morgan = require 'morgan'
+bodyParser = require 'body-parser'
+helmet = require 'helmet'
+csrf = require 'csurf'
+cookieParser = require 'cookie-parser'
+compress = require 'compression'
+cons = require 'consolidate'
 require 'sugar'
 
 # Provides a simple express application
@@ -16,7 +22,9 @@ class Application extends Core.CoreObject
   # Wraps the express use function
   #
   # @param [Function] fn The function used to configure the application
-  use: (fn) -> fn.call @, @app
+  use: (fn) ->
+    fn.call @, @app
+    @
 
   # Start the application
   #
@@ -42,5 +50,28 @@ class Application extends Core.CoreObject
       @httpServer = https.createServer(httpsOptions, @app).listen port
     else
       @httpServer = http.createServer(@app).listen port
+    @
+
+    useDefaults: () ->
+      fn = (app) ->
+        app.cookieParser = cookieParser()
+
+        app.engine 'html', cons.handlebars
+        app.set 'view engine', 'html'
+        app.set 'views', './out/views'
+
+        app.use bodyParser.json()
+        app.use bodyParser.urlencoded(extended: true)
+        app.use app.cookieParser
+        app.use compress()
+
+      @use fn
+
+    router: (path, fn) ->
+      router = express.Router()
+
+      fn.apply @, router
+      @app.use '/api', router
+      @
 
 module.exports = Application
